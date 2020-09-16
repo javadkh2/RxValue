@@ -1,24 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import RxValue, { useComputedValue } from "./RxValue";
+import { interval } from "rxjs";
+import { map, startWith } from "rxjs/operators";
 
-function App() {
+function App({ counter }) {
+  console.log("add render");
+  const [round, setRound] = useState(1);
+  const nextRound = () => setRound(round + 1);
+  const external = useComputedValue(counter, () =>
+    counter.pipe(map((c) => `external ${c}`))
+  );
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <RxValue>
+        {/* generate new observable in each render */}
+        {interval(1000).pipe(
+          startWith(-1),
+          map((time) => `round ${round} time: ${time + 1}`)
+        )}
+      </RxValue>
+      <br />
+      <button onClick={nextRound}> round({round}) </button>
+      <br />
+      <RxValue>{external}</RxValue>
     </div>
   );
 }

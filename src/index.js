@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { interval } from 'rxjs';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App counter={interval(1000)} />
   </React.StrictMode>,
   document.getElementById('root')
 );
